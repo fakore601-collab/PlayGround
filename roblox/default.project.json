@@ -1,0 +1,15 @@
+{
+  "name": "SurvivalIsland",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$path": "src/ReplicatedStorage"
+    },
+    "ServerScriptService": {
+      "$path": "src/ServerScriptService"
+    },
+    "StarterGui": {
+      "$path": "src/StarterGui"
+    }
+  }
+}

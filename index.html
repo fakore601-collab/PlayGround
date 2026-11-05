@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#071d20" />
+  <title>Survival Island — Find your way</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Survival Island home">
+        <span class="brand-mark">✳</span><span class="brand-copy"><strong>SURVIVAL</strong><small>ISLAND</small></span>
+      </a>
+      <div class="island-label"><span class="live-dot"></span><span>THE FORGOTTEN ISLAND</span><i>•</i><span id="weather">CLEAR SKIES</span></div>
+      <div class="top-actions"><div class="day-pill"><span>◷</span><span id="clock">DAY 1 · 08:00</span></div><button class="icon-btn" id="sound-btn" title="Toggle sound">♫</button><button class="icon-btn" id="help-btn" title="Controls">?</button></div>
+    </header>
+    <div class="game-layout">
+      <section class="world-panel">
+        <div class="world-topline"><div><span class="eyebrow">YOUR NEW HOME</span><h1>Make it through<br><em>one more day.</em></h1></div><div class="world-coords"><span class="pin">⌖</span><span id="location">SANDY SHORE</span><small>COORDINATES · <b id="coords">128, 094</b></small></div></div>
+        <div class="world-frame"><canvas id="world" aria-label="Island map game canvas"></canvas>
+          <div class="map-controls"><button id="zoom-out" aria-label="Zoom out">−</button><span>MAP</span><button id="zoom-in" aria-label="Zoom in">+</button></div>
+          <div class="world-toast" id="toast" aria-live="polite"></div>
+          <div class="world-legend"><span><i class="legend-player"></i> YOU</span><span><i class="legend-resource"></i> RESOURCES</span></div>
+          <div class="mobile-pad" id="mobile-pad"><button data-dir="up">↑</button><div><button data-dir="left">←</button><button data-dir="down">↓</button><button data-dir="right">→</button></div></div>
+        </div>
+        <div class="world-footer"><span><i class="pulse"></i> WORLD SIMULATION ACTIVE</span><span>WASD / ARROWS TO MOVE <b>·</b> CLICK A RESOURCE TO GATHER</span><span id="save-state">SAVED LOCALLY</span></div>
+      </section>
+      <aside class="hud">
+        <section class="survivor-card"><div class="survivor-heading"><div class="avatar">✦</div><div><span class="eyebrow">SURVIVOR</span><strong>Castaway</strong></div><span class="level">LVL <b id="level">1</b></span></div>
+          <div class="vitals"><div class="vital"><div class="vital-label"><span>♥ &nbsp;HEALTH</span><b id="health-value">100</b></div><div class="bar"><i id="health-bar" class="health-fill"></i></div></div><div class="vital"><div class="vital-label"><span>◉ &nbsp;HUNGER</span><b id="hunger-value">82</b></div><div class="bar"><i id="hunger-bar" class="hunger-fill"></i></div></div><div class="vital"><div class="vital-label"><span>≈ &nbsp;THIRST</span><b id="thirst-value">76</b></div><div class="bar"><i id="thirst-bar" class="thirst-fill"></i></div></div></div>
+        </section>
+        <section class="inventory-section"><div class="section-heading"><div><span class="eyebrow">WHAT YOU'VE GOT</span><h2>Inventory</h2></div><span class="capacity" id="capacity">0 / 40</span></div><div class="inventory-grid" id="inventory"></div></section>
+        <section class="quick-actions"><div class="section-heading compact"><div><span class="eyebrow">MAKE YOURSELF AT HOME</span><h2>Survival kit</h2></div></div><div class="action-grid"><button class="action-card" data-panel="craft"><span class="action-icon craft-icon">⚒</span><b>Craft</b><small>Make useful gear</small><span class="action-arrow">↗</span></button><button class="action-card" data-panel="build"><span class="action-icon build-icon">⌂</span><b>Build</b><small>Claim your shelter</small><span class="action-arrow">↗</span></button><button class="action-card" data-panel="missions"><span class="action-icon mission-icon">✧</span><b>Missions</b><small>Earn island rewards</small><span class="action-arrow">↗</span></button><button class="action-card" data-panel="shop"><span class="action-icon shop-icon">◇</span><b>Island shop</b><small>Spend your shells</small><span class="action-arrow">↗</span></button></div></section>
+        <section class="quest-card"><div class="quest-top"><span class="quest-icon">⚑</span><span class="eyebrow">TODAY'S MISSION</span><span class="quest-reward">+25 ◈</span></div><strong id="quest-title">Gather your bearings</strong><p id="quest-description">Collect 5 wood to get your first campfire going.</p><div class="quest-progress"><div class="bar"><i id="quest-bar"></i></div><span id="quest-count">0 / 5</span></div></section>
+      </aside>
+    </div>
+    <footer class="bottom-bar"><div class="tip"><span>✦</span><span><b>ISLAND TIP</b><i id="tip">Fresh coconuts are a quick way to beat thirst. Look near the palms!</i></span></div><div class="footer-stats"><span>☀ <b id="weather-footer">TROPICAL</b></span><span>◈ <b id="shell-count">0</b> SHELLS</span><button id="reset-btn">↺ &nbsp;NEW RUN</button></div></footer>
+    <div class="modal-backdrop" id="modal-backdrop"><div class="modal" role="dialog" aria-modal="true"><button class="modal-close" id="modal-close">×</button><div id="modal-content"></div></div></div>
+    <div class="help-pop" id="help-pop"><b>Getting around</b><p>Move with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or arrow keys. Click highlighted resources to gather nearby. Your progress saves automatically on this device.</p></div>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
