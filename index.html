@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مهامي</title>
+  <style>
+    :root { --bg:#17171a; --panel:#202124; --panel2:#27282b; --text:#f7f4ef; --muted:#9c9ba0; --orange:#ff9f43; --work:#f5a742; --study:#7d93d9; --personal:#61c98b; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at 50% 0%, #242329 0, var(--bg) 38%); color:var(--text); font-family:Tahoma, "Segoe UI", Arial, sans-serif; }
+    button, input, select { font:inherit; }
+    .app { width:min(920px, calc(100% - 32px)); margin:0 auto; padding:42px 0 70px; }
+    .header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:24px; }
+    h1 { margin:0; font-size:38px; letter-spacing:-1.5px; }
+    .remaining { color:var(--muted); font-size:15px; padding-bottom:5px; }
+    .remaining strong { color:var(--orange); margin-left:5px; }
+    .composer { background:var(--panel); border:1px solid #303136; border-radius:18px; padding:10px; display:grid; grid-template-columns:minmax(180px,1fr) 145px 48px; gap:8px; box-shadow:0 18px 45px rgba(0,0,0,.16); }
+    .composer input, .composer select { width:100%; height:48px; border:0; outline:none; border-radius:12px; color:var(--text); }
+    .composer input { background:transparent; padding:0 14px; direction:rtl; }
+    .composer input::placeholder { color:#77777d; }
+    .composer select { background:#292a2e; padding:0 12px; border:1px solid #34353a; cursor:pointer; }
+    .add { border:0; border-radius:12px; background:var(--orange); color:#1d1711; font-size:27px; font-weight:700; cursor:pointer; transition:.2s; }
+    .add:hover { filter:brightness(1.08); transform:translateY(-1px); }
+    .filters { display:flex; gap:8px; align-items:center; margin:22px 0 14px; flex-wrap:wrap; }
+    .filters button { height:38px; padding:0 13px; border-radius:999px; border:1px solid #35363a; background:var(--panel); color:#aaa9ae; cursor:pointer; }
+    .filters button.active { background:#fff0df; border-color:#fff0df; color:#302319; }
+    .status-filter { margin-right:auto; }
+    .status-filter select { height:38px; min-width:130px; border:1px solid #35363a; border-radius:999px; background:var(--panel); color:#c5c4c8; padding:0 12px; outline:none; }
+    .list { display:flex; flex-direction:column; gap:9px; }
+    .task { min-height:68px; display:grid; grid-template-columns:34px 1fr auto 36px; align-items:center; gap:10px; background:var(--panel); border:1px solid #303136; border-radius:14px; padding:10px 12px 10px 8px; transition:.18s; }
+    .task:hover { border-color:#42434a; transform:translateY(-1px); }
+    .check { width:21px; height:21px; border:2px solid #66676d; border-radius:50%; background:transparent; cursor:pointer; padding:0; }
+    .task.done .check { background:var(--orange); border-color:var(--orange); box-shadow:inset 0 0 0 5px var(--panel); }
+    .task.done .task-name { color:#77787d; text-decoration:line-through; }
+    .task-name { font-size:16px; }
+    .badge { border-radius:999px; padding:6px 10px; font-size:12px; font-weight:700; }
+    .badge.work { color:#ffc56c; background:rgba(245,167,66,.13); }
+    .badge.study { color:#aab8ef; background:rgba(125,147,217,.14); }
+    .badge.personal { color:#89dbab; background:rgba(97,201,139,.14); }
+    .delete { width:32px; height:32px; border:0; border-radius:9px; background:transparent; color:#77787d; cursor:pointer; font-size:17px; }
+    .delete:hover { background:#34353a; color:#fff; }
+    .empty { text-align:center; color:#77787d; padding:55px 10px; border:1px dashed #35363a; border-radius:14px; }
+    @media (max-width:600px) {
+      .app { width:min(100% - 20px, 920px); padding-top:24px; }
+      h1 { font-size:31px; }
+      .header { margin-bottom:18px; }
+      .composer { grid-template-columns:minmax(0,1fr) 110px 46px; border-radius:15px; }
+      .composer input { padding:0 8px; }
+      .composer select { font-size:13px; }
+      .filters { gap:6px; }
+      .filters button { height:36px; padding:0 10px; font-size:13px; }
+      .status-filter { width:100%; margin:4px 0 0; }
+      .status-filter select { width:100%; }
+      .task { grid-template-columns:30px minmax(0,1fr) auto 34px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1>مهامي</h1>
+      <div class="remaining"><strong id="remainingCount">0</strong> مهام متبقية</div>
+    </header>
+
+    <form class="composer" id="taskForm">
+      <input id="taskInput" type="text" maxlength="120" placeholder="ما الذي تريد إنجازه؟" autocomplete="off" />
+      <select id="categoryInput" aria-label="التصنيف">
+        <option value="work">عمل</option>
+        <option value="study">دراسة</option>
+        <option value="personal">شخصي</option>
+      </select>
+      <button class="add" type="submit" aria-label="إضافة مهمة">+</button>
+    </form>
+
+    <nav class="filters">
+      <button type="button" class="active" data-category="all">الكل</button>
+      <button type="button" data-category="work">عمل</button>
+      <button type="button" data-category="study">دراسة</button>
+      <button type="button" data-category="personal">شخصي</button>
+      <div class="status-filter">
+        <select id="statusFilter" aria-label="حالة المهمة">
+          <option value="all">كل الحالات</option>
+          <option value="active">غير مكتملة</option>
+          <option value="done">مكتملة</option>
+        </select>
+      </div>
+    </nav>
+
+    <section class="list" id="taskList"></section>
+  </main>
+
+  <script>
+    const labels = { work:'عمل', study:'دراسة', personal:'شخصي' };
+    const listEl = document.getElementById('taskList');
+    const input = document.getElementById('taskInput');
+    const categoryInput = document.getElementById('categoryInput');
+    const statusFilter = document.getElementById('statusFilter');
+    let categoryFilter = 'all';
+    let tasks = JSON.parse(localStorage.getItem('todo-tasks-v1') || '[]');
+
+    if (!tasks.length) {
+      tasks = [
+        { id:crypto.randomUUID(), name:'إنهاء تقرير المشروع', category:'work', done:false },
+        { id:crypto.randomUUID(), name:'مراجعة درس البرمجة', category:'study', done:false },
+        { id:crypto.randomUUID(), name:'شراء مستلزمات المنزل', category:'personal', done:true }
+      ];
+      save();
+    }
+
+    function save() { localStorage.setItem('todo-tasks-v1', JSON.stringify(tasks)); }
+
+    function escapeHtml(value) {
+      const div = document.createElement('div');
+      div.textContent = value;
+      return div.innerHTML;
+    }
+
+    function render() {
+      const status = statusFilter.value;
+      const visible = tasks.filter(t => (categoryFilter === 'all' || t.category === categoryFilter) && (status === 'all' || (status === 'done' ? t.done : !t.done)));
+      document.getElementById('remainingCount').textContent = tasks.filter(t => !t.done).length;
+
+      if (!visible.length) {
+        listEl.innerHTML = '<div class="empty">لا توجد مهام مطابقة للعرض</div>';
+        return;
+      }
+
+      listEl.innerHTML = visible.map(task => `
+        <article class="task ${task.done ? 'done' : ''}" data-id="${task.id}">
+          <button class="check" aria-label="${task.done ? 'إلغاء الإكمال' : 'تحديد كمكتملة'}"></button>
+          <div class="task-name">${escapeHtml(task.name)}</div>
+          <span class="badge ${task.category}">${labels[task.category]}</span>
+          <button class="delete" aria-label="حذف المهمة">×</button>
+        </article>
+      `).join('');
+    }
+
+    document.getElementById('taskForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = input.value.trim();
+      if (!name) { input.focus(); return; }
+      tasks.unshift({ id:crypto.randomUUID(), name, category:categoryInput.value, done:false });
+      input.value = '';
+      save();
+      render();
+    });
+
+    listEl.addEventListener('click', e => {
+      const taskEl = e.target.closest('.task');
+      if (!taskEl) return;
+      const id = taskEl.dataset.id;
+      if (e.target.classList.contains('check')) {
+        tasks = tasks.map(t => t.id === id ? {...t, done:!t.done} : t);
+      }
+      if (e.target.classList.contains('delete')) {
+        tasks = tasks.filter(t => t.id !== id);
+      }
+      save();
+      render();
+    });
+
+    document.querySelectorAll('[data-category]').forEach(button => {
+      button.addEventListener('click', () => {
+        categoryFilter = button.dataset.category;
+        document.querySelectorAll('[data-category]').forEach(b => b.classList.remove('active'));
+        button.classList.add('active');
+        render();
+      });
+    });
+
+    statusFilter.addEventListener('change', render);
+    render();
+  </script>
+</body>
+</html>
